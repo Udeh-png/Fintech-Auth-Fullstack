@@ -6,15 +6,16 @@ import { useState, useEffect, useRef } from "react";
 import { SignupFormType, signupSchema } from "@/types";
 import { LoadingScreen } from "@/components/shared/LoadingScreen";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { FormWrapper } from "@/components/auth/FormWrapper";
 import { ErrorMessage } from "@/components/auth/ErrorMessage";
 import { PasswordFieldWithChecks } from "@/components/auth/PasswordFieldWIthChecks";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { useRouter } from "next/navigation";
 
 export default function Signup() {
   const errMsgRef = useRef<HTMLDivElement | null>(null);
   const [, setTime] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -53,7 +54,7 @@ export default function Signup() {
         localStorage.setItem("otpRequestTimestamp", time || "0");
         return time;
       });
-      redirect("/auth/email-verification?context=verify");
+      router.push("/auth/email-verification?context=verify");
     }
 
     const error = await response.json();

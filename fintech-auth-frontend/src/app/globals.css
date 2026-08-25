@@ -1,26 +1,255 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-1: #9b4bc2;
+  --color-2: #9b4bc2;
+  --size: 0.75px;
+  --background: #080811;
+  --foreground: #ffffff;
+  --primary-color: #9b4bc2;
+  --secondary-color: #0b0812;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --slide-in-offset: 100%;
+  --gradient-primary: linear-gradient(90deg, #6d28ff 0%, #d946ef 100%);
+}
+
+@media (width < 48rem /* 768px */) {
+  :root {
+    --slide-in-offset: 0;
+  }
+}
+
+body.no-scroll {
+  overflow: hidden;
+}
+
+@media (width > 48rem /* 768px */) {
+  body.no-scroll {
+    padding-right: 35px;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary-color);
+  --color-secondary: var(--secondary-color);
+  --color-border-color: var(--border-color);
+  --color-primary-gradient: var(--gradient-primary);
+  --font-inter: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.input-label {
+  @apply font-medium mb-1;
+}
+
+.input-container {
+  @apply flex flex-col gap-y-1;
+}
+
+.form-input-wrapper {
+  @apply w-full bg-black/20 rounded-xl p-4 ring-2 ring-border-color focus:ring-2 focus-within:ring-[#9B4BC2] focus:ring-[#9B4BC2] transition duration-200 flex gap-3 items-center;
+}
+
+.form-input-wrapper input {
+  @apply outline-none w-full flex-1;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: inter, Arial, Helvetica, sans-serif;
+}
+
+.form-wrapper,
+.form-wrapper2 {
+  @apply md:rounded-4xl md:border overflow-clip relative md:bg-gray-700/10 md:px-10 md:py-12 px-0 border-border-color;
+}
+
+.form-wrapper::after {
+  background: var(--primary-color);
+  animation-delay: 0.5s !important;
+  height: 4px;
+}
+
+.form-wrapper2::after {
+  background: linear-gradient(
+    to right,
+    transparent,
+    color-mix(in srgb, var(--primary-color) 50%, transparent),
+    transparent
+  );
+  height: 2px;
+}
+
+.form-wrapper::after,
+.form-wrapper2::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  animation: grow 2s forwards;
+}
+
+@media (width < 48rem /* 768px */) {
+  .form-wrapper::after {
+    content: none;
+  }
+}
+
+@media (width < 48rem /* 768px */) {
+  .form-wrapper2::after {
+    content: none;
+  }
+}
+
+@keyframes grow {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.button-primary {
+  @apply w-full rounded-xl bg-primary p-4 text-white font-medium hover:bg-primary/90 transition duration-200 cursor-pointer shadow-[0_10px_20px_2px_color-mix(in_srgb,var(--primary-color)_20%,transparent)];
+}
+
+.otp-input {
+  @apply border-2 border-border-color rounded-lg md:size-13 size-12 text-center text-xl font-bold focus:border-primary outline-0 transition-colors duration-300;
+}
+
+.input-error-text {
+  @apply text-red-500 text-sm mt-1;
+}
+
+.scrollable-section::-webkit-scrollbar {
+  width: 0;
+}
+
+.recharts-tooltip-cursor {
+  stroke: rgba(255, 255, 255, 0.7) !important;
+}
+
+iframe {
+  @apply w-120! h-[70vh]! rounded-2xl! left-1/2! -translate-1/2! top-1/2!;
+  animation: iframe-animation;
+  animation-duration: 0.7s;
+  animation-iteration-count: 1;
+  box-shadow: 0 0 35px 10px rgba(155, 75, 194, 0.1);
+}
+
+@keyframes iframe-animation {
+  0% {
+    scale: 0;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
+
+.loader {
+  animation: rotate 1s infinite;
+  height: calc(60 * var(--size));
+  width: calc(60 * var(--size));
+}
+
+.loader:before,
+.loader:after {
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: calc(20 * var(--size));
+  width: calc(20 * var(--size));
+}
+.loader:before {
+  animation: ball1 1s infinite;
+  background-color: var(--color-1);
+  box-shadow: calc(40 * var(--size)) 0 0 var(--color-2);
+  margin-bottom: calc(20 * var(--size));
+}
+.loader:after {
+  animation: ball2 1s infinite;
+  background-color: var(--color-2);
+  box-shadow: calc(40 * var(--size)) 0 0 var(--color-1);
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg) scale(0.8);
+  }
+  50% {
+    transform: rotate(360deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(720deg) scale(0.8);
+  }
+}
+
+@keyframes ball1 {
+  0% {
+    box-shadow: calc(40 * var(--size)) 0 0 var(--color-2);
+  }
+  50% {
+    box-shadow: 0 0 0 var(--color-2);
+    margin-bottom: 0;
+    transform: translate(calc(20 * var(--size)), calc(20 * var(--size)));
+  }
+  100% {
+    box-shadow: calc(40 * var(--size)) 0 0 var(--color-2);
+    margin-bottom: calc(20 * var(--size));
+  }
+}
+
+@keyframes ball2 {
+  0% {
+    box-shadow: calc(40 * var(--size)) 0 0 var(--color-1);
+  }
+  50% {
+    box-shadow: 0 0 0 var(--color-1);
+    margin-top: calc(-20 * var(--size));
+    transform: translate(calc(20 * var(--size)), calc(20 * var(--size)));
+  }
+  100% {
+    box-shadow: calc(40 * var(--size)) 0 0 var(--color-1);
+    margin-top: 0;
+  }
+}
+
+.material-spinner {
+  --r: 50%;
+  --one-deg: calc((2 * 3.14159 * var(--r)) / 360);
+  animation: rotate 2s linear infinite;
+}
+
+.material-spinner .path {
+  stroke: white;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: var(--one-deg), calc(355 * var(--one-deg));
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: calc(300 * var(--one-deg)), calc(100 * var(--one-deg));
+    stroke-dashoffset: calc(-40 * var(--one-deg));
+  }
+  100% {
+    stroke-dasharray: calc(3 * var(--one-deg)), calc(357 * var(--one-deg));
+    stroke-dashoffset: calc(-360 * var(--one-deg));
+  }
 }
