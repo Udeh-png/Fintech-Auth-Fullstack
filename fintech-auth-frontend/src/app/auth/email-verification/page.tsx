@@ -22,6 +22,8 @@ const fields = [
 //  rather than just string. This is important so it matches the type of the form data.
 
 export default function EmailVerificationPage() {
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+
   const inputContainerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const [pasted, setPasted] = useState(false);
@@ -88,7 +90,7 @@ export default function EmailVerificationPage() {
   const verifyOtp = async (value: string) => {
     const apiEndpoint =
       param.get("context") == "verify" ? "registration/verify" : "verify-otp";
-    return await fetch(`http://localhost:8080/api/auth/${apiEndpoint}`, {
+    return await fetch(`${backendHostname}/api/auth/${apiEndpoint}`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -103,7 +105,7 @@ export default function EmailVerificationPage() {
       param.get("context") == "verify"
         ? "registration/resend-otp"
         : "resend-otp";
-    return await fetch(`http://localhost:8080/api/auth/${apiEndpoint}`, {
+    return await fetch(`${backendHostname}/api/auth/${apiEndpoint}`, {
       method: "POST",
       credentials: "include",
       headers: {

@@ -9,17 +9,20 @@ import { FormWrapper } from "@/components/auth/FormWrapper";
 import { MaterialSpinner } from "@/components/shared/MaterialSpinner";
 import { AnimatePresence, motion } from "framer-motion";
 import { PasswordInput } from "@/components/auth/PasswordInput";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<LogInType>({ resolver: zodResolver(loginSchema) });
+  const router = useRouter();
 
   const handleOnSubmit = async (data: LogInType) => {
-    const response = await fetch("http://localhost:8080/api/auth/login", {
+    const response = await fetch(`${backendHostname}/api/auth/login`, {
       method: "POST",
       credentials: "include",
       headers: {
@@ -29,8 +32,7 @@ export default function Login() {
     });
 
     if (response.ok) {
-      // eslint-disable-next-line react-hooks/immutability
-      window.location.href = "/dashboard";
+      router.push("/dashboard");
     }
 
     const errorData = await response.json();

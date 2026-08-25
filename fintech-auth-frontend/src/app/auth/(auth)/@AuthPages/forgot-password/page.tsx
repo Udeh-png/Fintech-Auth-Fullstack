@@ -16,6 +16,7 @@ const zodSchema = z.object({
 type FormType = z.infer<typeof zodSchema>;
 
 export default function ResetPassword() {
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
   const router = useRouter();
   const {
     register,
@@ -31,7 +32,7 @@ export default function ResetPassword() {
         className="px-1 md:px-0 md:space-y-7 space-y-5"
         onSubmit={handleSubmit(async (data) => {
           const req = await fetch(
-            "http://localhost:8080/api/auth/forgot-password",
+            `${backendHostname}/api/auth/forgot-password`,
             {
               method: "POST",
               credentials: "include",

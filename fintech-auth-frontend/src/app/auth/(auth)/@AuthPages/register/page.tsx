@@ -16,6 +16,7 @@ export default function Signup() {
   const errMsgRef = useRef<HTMLDivElement | null>(null);
   const [, setTime] = useState<string | null>(null);
   const router = useRouter();
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
 
   const {
     register,
@@ -36,7 +37,7 @@ export default function Signup() {
 
   const onSubmit = async (data: SignupFormType) => {
     const response = await fetch(
-      "http://localhost:8080/api/auth/registration/initiate",
+      `${backendHostname}/api/auth/registration/initiate`,
       {
         method: "POST",
         credentials: "include",

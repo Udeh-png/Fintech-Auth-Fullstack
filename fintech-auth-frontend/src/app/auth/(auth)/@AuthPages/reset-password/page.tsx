@@ -34,6 +34,7 @@ type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPassword() {
   const router = useRouter();
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
 
   const {
     handleSubmit,
@@ -47,17 +48,14 @@ export default function ResetPassword() {
 
   const handleFormSubmit = async (data: ResetPasswordType) => {
     console.log("submitted");
-    const request = await fetch(
-      "http://localhost:8080/api/auth/reset-password",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ password: data.password }),
+    const request = await fetch(`${backendHostname}/api/auth/reset-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      credentials: "include",
+      body: JSON.stringify({ password: data.password }),
+    });
 
     if (request.status == 200) {
       router.push("/dashboard");
