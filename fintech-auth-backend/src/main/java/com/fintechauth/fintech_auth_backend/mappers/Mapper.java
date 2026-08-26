@@ -1,12 +1,13 @@
-package com.walletly.walletly_backend.mappers;
+package com.fintechauth.fintech_auth_backend.mappers;
 
-import com.walletly.walletly_backend.dtos.requests.RegistrationRequest;
-import com.walletly.walletly_backend.dtos.response.UserResponse;
-import com.walletly.walletly_backend.integration.flutterwave.dto.requests.CreatePsaRequest;
-import com.walletly.walletly_backend.integration.flutterwave.dto.response.CreatePsaResponse;
-import com.walletly.walletly_backend.modals.User;
-import com.walletly.walletly_backend.modals.Wallet;
+import com.fintechauth.fintech_auth_backend.dtos.requests.RegistrationRequest;
+import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
+import com.fintechauth.fintech_auth_backend.models.User;
+import com.fintechauth.fintech_auth_backend.models.Wallet;
 import lombok.NonNull;
+
+import java.time.Instant;
+import java.util.Random;
 
 public class Mapper {
 	public static UserResponse userToUserResponse (@NonNull User user) {
@@ -29,29 +30,20 @@ public class Mapper {
 		);
 	}
 	
-	public static CreatePsaRequest registrationRequestToCreatePsaRequest(@NonNull RegistrationRequest registrationRequest) {
-		return new CreatePsaRequest(
-				registrationRequest.getFirstName() + " " + registrationRequest.getLastName(),
-				registrationRequest.getEmail(),
-				"NG",
-				"035"
-		);
-	}
-	
-	public static Wallet mapToWallet (@NonNull User user, @NonNull CreatePsaResponse createPsaResponse) {
+	public static Wallet mapToWallet (@NonNull User user) {
+		String accNum = String.valueOf(new Random().nextLong(10));
+		String[] bankNames = {"Wema", "Access", "Opay", "Moniepoint", "Kuda", "UBA"};
+		int bankNameSelectionIdx = (int) accNum.charAt(5) % 5;
 		return new Wallet(
 				user.getId(),
-				createPsaResponse.getData().getAccount_name(),
+				user.getUserName(),
 				0,
-				createPsaResponse.getData().getNuban(),
-				createPsaResponse.getData().getBank_name(),
-				createPsaResponse.getData().getBarter_id(),
-				createPsaResponse.getData().getAccount_reference(),
-				createPsaResponse.getData().getId(),
-				createPsaResponse.getData().getEmail(),
-				createPsaResponse.getData().getCountry(),
-				createPsaResponse.getStatus(),
-				createPsaResponse.getData().getCreated_at()
+				accNum,
+				bankNames[bankNameSelectionIdx],
+				user.getEmail(),
+				"Nigeria",
+				"ACTIVE",
+				Instant.now()
 		);
 	}
 }

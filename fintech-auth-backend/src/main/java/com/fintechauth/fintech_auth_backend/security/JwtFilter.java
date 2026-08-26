@@ -1,8 +1,7 @@
-package com.walletly.walletly_backend.security;
+package com.fintechauth.fintech_auth_backend.security;
 
-import com.walletly.walletly_backend.services.JwtService;
-import com.walletly.walletly_backend.utils.CookieType;
-import com.walletly.walletly_backend.utils.CookiesUtil;
+import com.fintechauth.fintech_auth_backend.services.JwtService;
+import com.fintechauth.fintech_auth_backend.utils.CookieType;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,9 +19,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {

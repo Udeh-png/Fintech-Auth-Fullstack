@@ -1,4 +1,4 @@
-package com.walletly.walletly_backend.dtos.response;
+package com.fintechauth.fintech_auth_backend.dtos.response;
 
 import lombok.*;
 

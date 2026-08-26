@@ -1,7 +1,7 @@
-package com.walletly.walletly_backend.services;
+package com.fintechauth.fintech_auth_backend.services;
 
-import com.walletly.walletly_backend.dtos.response.UserResponse;
-import com.walletly.walletly_backend.modals.User;
+import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
+import com.fintechauth.fintech_auth_backend.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

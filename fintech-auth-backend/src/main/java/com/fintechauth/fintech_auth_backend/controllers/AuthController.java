@@ -1,13 +1,14 @@
-package com.walletly.walletly_backend.controllers;
+package com.fintechauth.fintech_auth_backend.controllers;
 
-import com.walletly.walletly_backend.dtos.requests.LoginRequest;
-import com.walletly.walletly_backend.dtos.requests.RegistrationRequest;
-import com.walletly.walletly_backend.dtos.requests.VerifyEmailRequest;
-import com.walletly.walletly_backend.dtos.response.UserResponse;
-import com.walletly.walletly_backend.exceptions.SessionNotFoundException;
-import com.walletly.walletly_backend.services.*;
-import com.walletly.walletly_backend.utils.CookieType;
-import com.walletly.walletly_backend.utils.CookiesUtil;
+import com.fintechauth.fintech_auth_backend.dtos.requests.LoginRequest;
+import com.fintechauth.fintech_auth_backend.dtos.requests.RegistrationRequest;
+import com.fintechauth.fintech_auth_backend.dtos.requests.VerifyEmailRequest;
+import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
+import com.fintechauth.fintech_auth_backend.exceptions.SessionNotFoundException;
+import com.fintechauth.fintech_auth_backend.services.AuthService;
+import com.fintechauth.fintech_auth_backend.services.JwtService;
+import com.fintechauth.fintech_auth_backend.utils.CookieType;
+import com.fintechauth.fintech_auth_backend.utils.CookiesUtil;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

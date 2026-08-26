@@ -1,11 +1,8 @@
-package com.walletly.walletly_backend.repos;
+package com.fintechauth.fintech_auth_backend.repos;
 
-import com.walletly.walletly_backend.modals.Wallet;
+import com.fintechauth.fintech_auth_backend.models.Wallet;
 import lombok.NonNull;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

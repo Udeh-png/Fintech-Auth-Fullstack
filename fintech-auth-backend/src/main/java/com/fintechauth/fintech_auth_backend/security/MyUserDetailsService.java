@@ -1,6 +1,6 @@
-package com.walletly.walletly_backend.security;
+package com.fintechauth.fintech_auth_backend.security;
 
-import com.walletly.walletly_backend.repos.UserRepo;
+import com.fintechauth.fintech_auth_backend.repos.UserRepo;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

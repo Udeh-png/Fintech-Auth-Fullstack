@@ -1,4 +1,4 @@
-package com.walletly.walletly_backend.exceptions;
+package com.fintechauth.fintech_auth_backend.exceptions;
 
 public class OtpMissMatchException extends RuntimeException {
 	public OtpMissMatchException() {

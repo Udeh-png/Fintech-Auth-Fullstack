@@ -1,7 +1,7 @@
-package com.walletly.walletly_backend.configurations;
+package com.fintechauth.fintech_auth_backend.configurations;
 
-import com.walletly.walletly_backend.security.JwtFilter;
-import com.walletly.walletly_backend.security.MyUserDetailsService;
+import com.fintechauth.fintech_auth_backend.security.JwtFilter;
+import com.fintechauth.fintech_auth_backend.security.MyUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

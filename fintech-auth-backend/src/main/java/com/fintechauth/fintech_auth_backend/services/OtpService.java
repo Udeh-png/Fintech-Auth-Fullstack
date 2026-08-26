@@ -1,18 +1,11 @@
-package com.walletly.walletly_backend.services;
+package com.fintechauth.fintech_auth_backend.services;
 
-import com.resend.Resend;
-import com.resend.core.exception.ResendException;
-import com.resend.services.emails.model.CreateEmailOptions;
-import com.walletly.walletly_backend.exceptions.*;
+import com.fintechauth.fintech_auth_backend.exceptions.*;
 import jakarta.mail.MessagingException;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import javax.security.auth.login.AccountLockedException;
 import java.io.UnsupportedEncodingException;
@@ -20,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service()
 public class OtpService {
@@ -62,8 +55,17 @@ public class OtpService {
 		
 		String encodedOtp = encodeOtp(otp, salt);
 		
-		redisTemplate.opsForValue().set("otp:code:"+email,encodedOtp, OTP_TTL, TimeUnit.MINUTES);
-		redisTemplate.opsForValue().set("otp:salt:"+email,salt, OTP_TTL, TimeUnit.MINUTES);
+		redisTemplate.opsForValue().set(
+				"otp:code:"+email,
+				encodedOtp,
+				Expiration.from(Duration.ofMinutes(OTP_TTL))
+		);
+		
+		redisTemplate.opsForValue().set(
+				"otp:salt:"+email,
+				salt,
+				Expiration.from(Duration.ofMinutes(OTP_TTL))
+		);
 		// TODO: storing the salt and value in the same place??
 	}
 	
@@ -96,7 +98,11 @@ public class OtpService {
 		final String requestsKey = "otp:requests:" + email;
 		final String requestCooldownKey = "otp:requests:cooldown:" + email;
 		
-		Boolean createdCooldown = redisTemplate.opsForValue().setIfAbsent(requestCooldownKey, "1", 1, TimeUnit.MINUTES);
+		Boolean createdCooldown = redisTemplate.opsForValue().setIfAbsent(
+				requestCooldownKey,
+				"1",
+				Expiration.from(Duration.ofMinutes(1))
+		);
 		
 		if (Boolean.FALSE.equals(createdCooldown)) throw new CooldownActiveException(redisTemplate.getExpire(requestCooldownKey));
 		
@@ -105,7 +111,7 @@ public class OtpService {
 		long currentReqCount = requests == null ? 0 : requests;
 		
 		if (currentReqCount == 1) {
-			redisTemplate.expire(requestsKey, OTP_REQUESTS_TTL, TimeUnit.MINUTES); // if the key was created add the TTL
+			redisTemplate.expire(requestsKey, Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL))); // if the key was created add the TTL
 		}
 		
 		if (currentReqCount > REQUESTS_LIMIT) { // Used > so if a prev request incs the key this catches it
@@ -116,7 +122,12 @@ public class OtpService {
 			mailService.sendEmail(email, otp, "OTP Verification");
 		
 		if (currentReqCount == REQUESTS_LIMIT) {
-			redisTemplate.opsForValue().set("otp:requests:locked:" + email, "1", ACCOUNT_LOCK_TTL, TimeUnit.MINUTES);
+			redisTemplate.opsForValue().set(
+					"otp:requests:locked:" + email,
+					"1",
+					Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
+			);
+			
 			resetCounter(requestsKey);
 		}
 	}
@@ -130,7 +141,7 @@ public class OtpService {
 		Long attempts = redisTemplate.opsForValue().increment(attemptsKey);
 		
 		if (attempts != null && attempts == 1) {
-			redisTemplate.expire("otp:attempts:" + email, OTP_REQUESTS_TTL, TimeUnit.MINUTES);
+			redisTemplate.expire("otp:attempts:" + email, Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL)));
 		}
 		
 		long currentAttemptsCount = attempts == null ? 0 : attempts;
@@ -140,8 +151,17 @@ public class OtpService {
 		}
 		
 		if (currentAttemptsCount == ATTEMPTS_LIMIT) {
-			redisTemplate.opsForValue().set("otp:attempts:locked:" + email, "1", ACCOUNT_LOCK_TTL, TimeUnit.MINUTES);
-			redisTemplate.opsForValue().set("otp:requests:locked:" + email, "1", ACCOUNT_LOCK_TTL, TimeUnit.MINUTES);
+			redisTemplate.opsForValue().set(
+					"otp:attempts:locked:" + email,
+					"1",
+					Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
+			);
+			
+			redisTemplate.opsForValue().set(
+					"otp:requests:locked:" + email,
+					"1",
+					Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
+			);
 			invalidateOtp(email);
 			resetCounter(attemptsKey);
 			throw new TooManyAttemptsException();

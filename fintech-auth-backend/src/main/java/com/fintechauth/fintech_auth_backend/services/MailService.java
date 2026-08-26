@@ -1,4 +1,4 @@
-package com.walletly.walletly_backend.services;
+package com.fintechauth.fintech_auth_backend.services;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;

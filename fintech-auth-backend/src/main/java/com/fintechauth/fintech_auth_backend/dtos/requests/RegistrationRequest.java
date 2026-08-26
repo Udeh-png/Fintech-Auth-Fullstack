@@ -1,4 +1,4 @@
-package com.walletly.walletly_backend.dtos.requests;
+package com.fintechauth.fintech_auth_backend.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

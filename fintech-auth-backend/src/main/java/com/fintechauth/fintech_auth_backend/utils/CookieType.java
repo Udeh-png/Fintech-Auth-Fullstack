@@ -1,4 +1,4 @@
-package com.walletly.walletly_backend.utils;
+package com.fintechauth.fintech_auth_backend.utils;
 
 import lombok.Getter;
 

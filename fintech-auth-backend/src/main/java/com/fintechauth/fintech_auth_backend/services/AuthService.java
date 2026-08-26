@@ -1,20 +1,20 @@
-package com.walletly.walletly_backend.services;
+package com.fintechauth.fintech_auth_backend.services;
 
-import com.walletly.walletly_backend.dtos.requests.LoginRequest;
-import com.walletly.walletly_backend.integration.flutterwave.dto.response.CreatePsaResponse;
-import com.walletly.walletly_backend.mappers.Mapper;
-import com.walletly.walletly_backend.dtos.requests.RegistrationRequest;
-import com.walletly.walletly_backend.dtos.response.UserResponse;
-import com.walletly.walletly_backend.exceptions.SessionNotFoundException;
-import com.walletly.walletly_backend.exceptions.UserEmailAlreadyExists;
-import com.walletly.walletly_backend.modals.Wallet;
-import com.walletly.walletly_backend.repos.WalletRepo;
-import com.walletly.walletly_backend.security.MyUserDetails;
-import com.walletly.walletly_backend.modals.User;
-import com.walletly.walletly_backend.repos.UserRepo;
+import com.fintechauth.fintech_auth_backend.dtos.requests.LoginRequest;
+import com.fintechauth.fintech_auth_backend.mappers.Mapper;
+import com.fintechauth.fintech_auth_backend.dtos.requests.RegistrationRequest;
+import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
+import com.fintechauth.fintech_auth_backend.exceptions.SessionNotFoundException;
+import com.fintechauth.fintech_auth_backend.exceptions.UserEmailAlreadyExists;
+import com.fintechauth.fintech_auth_backend.models.Wallet;
+import com.fintechauth.fintech_auth_backend.repos.WalletRepo;
+import com.fintechauth.fintech_auth_backend.security.MyUserDetails;
+import com.fintechauth.fintech_auth_backend.models.User;
+import com.fintechauth.fintech_auth_backend.repos.UserRepo;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,19 +26,16 @@ import tools.jackson.databind.ObjectMapper;
 
 import javax.security.auth.login.AccountLockedException;
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class AuthService {
 	@Autowired
 	private OtpService otpService;
-	@Autowired
-	private FlutterWaveService flutterService;
-	
 	@Autowired
 	private UserRepo userRepo;
 	@Autowired
@@ -88,8 +85,7 @@ public class AuthService {
 		
 		User savedUser = userRepo.save(user);
 		
-		CreatePsaResponse psaResponse = flutterService.createPayoutSubaccount(regRequest);
-		Wallet newWallet = Mapper.mapToWallet(savedUser, psaResponse);
+		Wallet newWallet = Mapper.mapToWallet(savedUser);
 		
 		walletRepo.save(newWallet);
 		
@@ -132,8 +128,7 @@ public class AuthService {
 		redisTemplate.opsForValue().set(
 				"forgot:password:email:address:"+ id,
 				email,
-				SESSION_TTL,
-				TimeUnit.MINUTES
+				Expiration.from(Duration.ofMinutes(SESSION_TTL))
 		);
 		
 		issueOtp(email);
@@ -202,10 +197,12 @@ public class AuthService {
 		redisTemplate.opsForValue().set(
 				"otp:userInfo:"+ id,
 				objectMapper.writeValueAsString(regInfo),
-				SESSION_TTL,
-				TimeUnit.MINUTES
+				Expiration.from(Duration.ofMinutes(SESSION_TTL))
 		);
-		redisTemplate.opsForValue().set("otp:sessionId:"+regInfo.getEmail(), id, SESSION_TTL, TimeUnit.MINUTES);
+		redisTemplate.opsForValue().set(
+				"otp:sessionId:"+regInfo.getEmail(),
+				id,
+				Expiration.from(Duration.ofMinutes(SESSION_TTL)));
 	}
 	
 	public void resetRedisRegKeys (String id, String email) {

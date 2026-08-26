@@ -1,7 +1,6 @@
-package com.walletly.walletly_backend.exceptions;
+package com.fintechauth.fintech_auth_backend.exceptions;
 
-import com.resend.core.exception.ResendException;
-import com.walletly.walletly_backend.dtos.response.ErrorResponse;
+import com.fintechauth.fintech_auth_backend.dtos.response.ErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 @Slf4j
@@ -37,28 +35,11 @@ public class GlobalExceptionHandler {
 				.body(er);
 	}
 	
-	@ExceptionHandler(SocketTimeoutException.class)
-	public ResponseEntity<@NonNull ErrorResponse> handleSocketTimeout (ResendException e) {
-		ErrorResponse er = new ErrorResponse("Network unreachable. Check your internet connection Nigger", "TIMEOUT");
-		return ResponseEntity
-				.status(HttpStatus.GATEWAY_TIMEOUT)
-				.body(er);
-	}
-	
 	@ExceptionHandler(UnknownHostException.class)
 	public ResponseEntity<@NonNull ErrorResponse> unknownHostHandler (UnknownHostException uhe) {
 		ErrorResponse er = new ErrorResponse("The connection is taking too long. Please check your internet and try again.", "NETWORK");
 		return ResponseEntity
 				.status(HttpStatus.SERVICE_UNAVAILABLE)
-				.body(er);
-	}
-	
-	@ExceptionHandler(ResendException.class)
-	public ResponseEntity<@NonNull ErrorResponse> resendExceptionHandler (ResendException re) {
-		ErrorResponse er = new ErrorResponse(re.getMessage(), null);
-		
-		return ResponseEntity
-				.internalServerError()
 				.body(er);
 	}
 	

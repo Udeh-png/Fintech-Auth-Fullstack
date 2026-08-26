@@ -1,4 +1,4 @@
-package com.walletly.walletly_backend.configurations;
+package com.fintechauth.fintech_auth_backend.configurations;
 
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
