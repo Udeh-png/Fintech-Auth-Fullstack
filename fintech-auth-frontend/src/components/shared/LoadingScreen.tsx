@@ -22,7 +22,7 @@ export const LoadingScreen = ({ isLoading }: { isLoading: boolean }) => {
           }}
           className="fixed inset-0 w-full h-full bg-black/50 flex items-center justify-center z-100000000"
         >
-          <MaterialSpinner sizeInPx={50} />
+          <MaterialSpinner sizeInPx={50} color="var(--primary-color)" />
         </motion.div>
       )}
     </AnimatePresence>

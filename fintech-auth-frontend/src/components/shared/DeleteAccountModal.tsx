@@ -2,17 +2,32 @@ import { Modal } from "./Modal";
 import { useMediaQuery } from "@/hooks/UseMediaQuery";
 import { BottomSheet } from "./BottomSheet";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { LoadingScreen } from "./LoadingScreen";
 
 const DeleteAccountComp = ({ onClose }: { onClose: () => void }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
   const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+
   const handleDeleteAccount = async () => {
-    await fetch(`${backendHostname}/api/account/delete-account`, {
-      method: "POST",
-      credentials: "include",
-    });
+    setIsLoading(true);
+    const delReq = await fetch(
+      `${backendHostname}/api/account/delete-account`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      },
+    );
+    setIsLoading(false);
+
+    if (String(delReq.status).startsWith("2")) router.push("/auth/register");
   };
   return (
     <div className="space-y-5 w-fit bg-[#161224] md:p-7 px-3 py-7 rounded-2xl text-white max-w-100">
+      <LoadingScreen isLoading={isLoading} />
       <div className="text-2xl p-3 bg-red-500/10 rounded-full text-red-500 size-fit">
         <FaRegTrashCan />
       </div>

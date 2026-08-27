@@ -32,7 +32,8 @@ export default function Login() {
     });
 
     if (response.ok) {
-      router.push("/dashboard");
+      router.push("/home");
+      return;
     }
 
     const errorData = await response.json();

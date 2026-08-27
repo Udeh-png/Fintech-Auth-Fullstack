@@ -58,7 +58,7 @@ export default function ResetPassword() {
     });
 
     if (request.status == 200) {
-      router.push("/dashboard");
+      router.push("/home");
       window.sessionStorage.setItem("passwordResetSuccess", "1");
     }
   };

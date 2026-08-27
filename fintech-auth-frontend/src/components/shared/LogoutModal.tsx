@@ -1,17 +1,31 @@
+"use client";
+
 import { LuLogOut } from "react-icons/lu";
 import { Modal } from "./Modal";
 import { useMediaQuery } from "@/hooks/UseMediaQuery";
 import { BottomSheet } from "./BottomSheet";
+import { useRouter } from "next/navigation";
+import { LoadingScreen } from "./LoadingScreen";
+import { useState } from "react";
 
 const LogoutComp = ({ onClose }: { onClose: () => void }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+
   const handleLogout = async () => {
-    await fetch("http://localhost:8080/api/account/logout", {
+    setIsLoading(true);
+    const logoutReq = await fetch(`${backendHostname}/api/account/logout`, {
       method: "POST",
       credentials: "include",
     });
+    setIsLoading(false);
+    if (String(logoutReq.status).startsWith("2")) router.push("/auth/login");
   };
   return (
     <div className="space-y-5 w-fit bg-[#161224] md:p-7 px-3 py-7 rounded-2xl text-white">
+      <LoadingScreen isLoading={isLoading} />
       <div className="text-2xl p-3 bg-primary/10 rounded-full text-primary size-fit">
         <LuLogOut />
       </div>

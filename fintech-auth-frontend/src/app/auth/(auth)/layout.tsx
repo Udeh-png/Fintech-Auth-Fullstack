@@ -11,7 +11,7 @@ export default function Layout({
     <div className="md:px-10 md:pt-7 pt-5">
       <div className="fixed size-120 blur-3xl rounded-full md:-bottom-50 -top-50 -left-30 bg-primary -z-10 opacity-10" />
 
-      <div className="grid lg:grid-cols-2 mx-auto gap-x-10">
+      <div className="grid lg:grid-cols-2 mx-auto gap-x-10 gap-y-7">
         {children}
 
         <div className="pr-1">

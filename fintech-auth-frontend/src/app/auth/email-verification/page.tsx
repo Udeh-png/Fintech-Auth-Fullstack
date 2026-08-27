@@ -132,7 +132,7 @@ export default function EmailVerificationPage() {
         localStorage.removeItem("userEmail");
 
         console.log("otp is valid");
-        if (param.get("context") == "register") redirect("/dashboard");
+        if (param.get("context") == "register") redirect("/home");
 
         redirect("/auth/reset-password");
       }
