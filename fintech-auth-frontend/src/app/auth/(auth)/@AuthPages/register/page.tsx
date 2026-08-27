@@ -55,7 +55,8 @@ export default function Signup() {
         localStorage.setItem("otpRequestTimestamp", time || "0");
         return time;
       });
-      router.push("/auth/email-verification?context=verify");
+      router.push("/auth/email-verification?context=register");
+      return;
     }
 
     const error = await response.json();

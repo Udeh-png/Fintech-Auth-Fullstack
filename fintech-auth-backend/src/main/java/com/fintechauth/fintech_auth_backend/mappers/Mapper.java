@@ -31,7 +31,7 @@ public class Mapper {
 	}
 	
 	public static Wallet mapToWallet (@NonNull User user) {
-		String accNum = String.valueOf(new Random().nextLong(10));
+		String accNum = String.valueOf(new Random().nextLong(10000000000L));
 		String[] bankNames = {"Wema", "Access", "Opay", "Moniepoint", "Kuda", "UBA"};
 		int bankNameSelectionIdx = (int) accNum.charAt(5) % 5;
 		return new Wallet(

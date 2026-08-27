@@ -1,9 +1,6 @@
 package com.fintechauth.fintech_auth_backend.models;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Document("Wallets")
 @RequiredArgsConstructor
+@Data
 @Getter
 public class Wallet {
 	@Id
@@ -34,7 +32,7 @@ public class Wallet {
 	
 	@Setter
 	@NonNull
-	private String virtualAccountNumber;
+	private String accountNumber;
 	
 	@Setter
 	@NonNull
@@ -42,7 +40,7 @@ public class Wallet {
 	
 	@Setter
 	@NonNull
-	private String email;
+	private String emailAddress;
 	
 	@Setter
 	private String mobileNumber;

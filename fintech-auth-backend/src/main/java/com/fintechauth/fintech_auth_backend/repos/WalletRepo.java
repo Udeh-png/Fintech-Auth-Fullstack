@@ -11,10 +11,4 @@ import java.util.Optional;
 public interface WalletRepo extends MongoRepository<@NonNull  Wallet, @NonNull String> {
 	Optional<Wallet> findByUserId(String userId);
 	
-	Optional<Wallet> findByAccountNumber(String accountNumber);
-	
-	Optional<Wallet> findByMobileNumber(String mobileNumber);
-	
-	Optional<Wallet> findByEmailAddress(String emailAddress);
-	
 }

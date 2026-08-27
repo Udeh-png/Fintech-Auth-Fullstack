@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.core.JsonParser;
 import tools.jackson.databind.ObjectMapper;
 
@@ -71,6 +72,7 @@ public class AuthService {
 		return id;
 	}
 	
+	@Transactional
 	public UserResponse verifyRegistration (String otp, String sessionId) throws AccountLockedException {
 		RegistrationRequest regRequest = getRegInfo(sessionId);
 		

@@ -16,6 +16,7 @@ import java.time.Instant;
 @Document("Users")
 public class User {
 	@Id
+	@Setter
 	private String id;
 	
 	@NonNull

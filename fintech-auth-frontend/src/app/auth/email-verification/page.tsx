@@ -89,7 +89,7 @@ export default function EmailVerificationPage() {
 
   const verifyOtp = async (value: string) => {
     const apiEndpoint =
-      param.get("context") == "verify" ? "registration/verify" : "verify-otp";
+      param.get("context") == "register" ? "registration/verify" : "verify-otp";
     return await fetch(`${backendHostname}/api/auth/${apiEndpoint}`, {
       method: "POST",
       credentials: "include",
@@ -102,7 +102,7 @@ export default function EmailVerificationPage() {
 
   const resendOtp = async () => {
     const apiEndpoint =
-      param.get("context") == "verify"
+      param.get("context") == "register"
         ? "registration/resend-otp"
         : "resend-otp";
     return await fetch(`${backendHostname}/api/auth/${apiEndpoint}`, {
@@ -132,7 +132,7 @@ export default function EmailVerificationPage() {
         localStorage.removeItem("userEmail");
 
         console.log("otp is valid");
-        if (param.get("context") == "verify") redirect("/dashboard");
+        if (param.get("context") == "register") redirect("/dashboard");
 
         redirect("/auth/reset-password");
       }
