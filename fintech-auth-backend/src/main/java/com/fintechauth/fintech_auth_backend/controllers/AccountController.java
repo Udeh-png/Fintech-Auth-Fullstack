@@ -1,5 +1,6 @@
 package com.fintechauth.fintech_auth_backend.controllers;
 
+import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
 import com.fintechauth.fintech_auth_backend.services.AccountService;
 import com.fintechauth.fintech_auth_backend.services.JwtService;
 import com.fintechauth.fintech_auth_backend.utils.CookieType;
@@ -12,10 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 @RestController
@@ -55,5 +53,19 @@ public class AccountController {
 				.header(HttpHeaders.SET_COOKIE, deletedAccessTokenCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, deletedRefreshTokenCookie.toString())
 				.build();
+	}
+	
+	@GetMapping("/me")
+	public ResponseEntity<?> user (HttpServletRequest request) {
+		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
+		
+		assert accessTokenCookie != null;
+		String accessToken = accessTokenCookie.getValue();
+		
+		String userId = jwtService.extractClaim(accessToken, Claims::getSubject);
+		
+		UserResponse userResponse = accountService.getUserDeets(userId);
+		
+		return ResponseEntity.ok(userResponse);
 	}
 }
