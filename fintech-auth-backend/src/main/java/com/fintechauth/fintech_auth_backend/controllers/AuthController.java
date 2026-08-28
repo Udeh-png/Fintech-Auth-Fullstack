@@ -113,14 +113,14 @@ public class AuthController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
-	@PostMapping("/verify-otp")
-	public ResponseEntity<?> verifyOtp (@RequestBody HashMap<String, String> otpMap, HttpServletRequest request, HttpServletResponse response) throws AccountLockedException {
+	@PostMapping("/verify-password-reset-otp")
+	public ResponseEntity<?> verifyPasswordResetOtp (@RequestBody HashMap<String, String> otpMap, HttpServletRequest request, HttpServletResponse response) throws AccountLockedException {
 		Cookie forgotPasswordIdCookie = WebUtils.getCookie(request, "FORGOT_PASSWORD_SESSION_ID");
 		if (forgotPasswordIdCookie == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
 		
-		String resetPasswordId = authService.verifyOtp(forgotPasswordIdCookie.getValue(), otpMap.get("otp"));
+		String resetPasswordId = authService.verifyPasswordResetOtp(forgotPasswordIdCookie.getValue(), otpMap.get("otp"));
 		
 		ResponseCookie resetPasswordCookie = CookiesUtil.createCookie(CookieType.RESET_PASSWORD_SESSION_ID, resetPasswordId);
 		

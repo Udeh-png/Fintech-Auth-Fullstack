@@ -12,8 +12,13 @@ import com.fintechauth.fintech_auth_backend.security.MyUserDetails;
 import com.fintechauth.fintech_auth_backend.models.User;
 import com.fintechauth.fintech_auth_backend.repos.UserRepo;
 import jakarta.mail.MessagingException;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisHashCommands;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,9 +34,7 @@ import javax.security.auth.login.AccountLockedException;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -92,7 +95,7 @@ public class AuthService {
 		walletRepo.save(newWallet);
 		
 		otpService.resetRedisOtpKeys(userEmail);
-		resetRedisRegKeys(sessionId, userEmail);
+		resetRedisRegKeys();
 		
 		return Mapper.userToUserResponse(user);
 	}
@@ -144,7 +147,7 @@ public class AuthService {
 		issueOtp(email);
 	}
 	
-	public String verifyOtp (String id, String otp) throws AccountLockedException {
+	public String verifyPasswordResetOtp(String id, String otp) throws AccountLockedException {
 		String email = redisTemplate.opsForValue().get("forgot:password:email:address:"+ id);
 		otpService.verifyOtp(email, otp);
 		
@@ -152,9 +155,16 @@ public class AuthService {
 		
 		String resetPasswordId = generateId();
 		
-		redisTemplate.opsForValue().set("reset:password:email:address:" + resetPasswordId, email);
+		redisTemplate.executePipelined(new SessionCallback<>() {
+			@Override
+			public <K, V> Object execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
+				redisTemplate.opsForValue().set("reset:password:email:address:" + resetPasswordId, email);
+				
+				redisTemplate.delete("forgot:password:email:address:"+id);
+				return null;
+			}
+		});
 		
-		redisTemplate.delete("forgot:password:email:address:"+id);
 		otpService.resetRedisOtpKeys(email);
 		
 		return resetPasswordId;
@@ -196,35 +206,26 @@ public class AuthService {
 	}
 	
 	public void storeRegSession (String id, RegistrationRequest regInfo) {
-		redisTemplate.opsForValue().set(
-				"otp:userInfo:"+ id,
-				objectMapper.writeValueAsString(regInfo),
-				Expiration.from(Duration.ofMinutes(SESSION_TTL))
-		);
-		redisTemplate.opsForValue().set(
-				"otp:sessionId:"+regInfo.getEmail(),
-				id,
-				Expiration.from(Duration.ofMinutes(SESSION_TTL)));
+		Map<String, Object> regInfoMap = Map.of(id, regInfo, regInfo.getEmail(), id);
+		redisTemplate.opsForHash()
+				.putAndExpire(
+						"reg:info",
+						regInfoMap,
+						RedisHashCommands.HashFieldSetOption.UPSERT,
+						Expiration.from(Duration.ofMinutes(SESSION_TTL))
+				);
 	}
 	
-	public void resetRedisRegKeys (String id, String email) {
-		redisTemplate.delete("otp:userInfo:"+ id);
-		redisTemplate.delete("otp:sessionId:"+email);
+	public void resetRedisRegKeys () {
+		redisTemplate.delete("reg:info");
 	}
 	
 	public RegistrationRequest getRegInfo (String sessionId) {
-		String userInfoJson = redisTemplate.opsForValue().get("otp:userInfo:"+sessionId);
 		
-		if (userInfoJson == null) throw new SessionNotFoundException();
-		
-		JsonParser parser = objectMapper.createParser(userInfoJson);
-		RegistrationRequest userInfo = parser.readValueAs(RegistrationRequest.class);
-		parser.close();
-		
-		return userInfo;
+		return (RegistrationRequest) redisTemplate.opsForHash().get("reg:info", sessionId);
 	}
 	
 	public String getRegId (String email) {
-		return redisTemplate.opsForValue().get("otp:sessionId:"+email);
+		return (String) redisTemplate.opsForHash().get("reg:info", email);
 	}
 }

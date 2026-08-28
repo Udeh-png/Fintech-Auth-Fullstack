@@ -37,20 +37,23 @@ public class AccountController {
 				.build();
 	}
 	
-	@DeleteMapping("delete-account")
+	@DeleteMapping("/delete-account")
 	public ResponseEntity<?> deleteAccount (HttpServletRequest request) {
-		ResponseCookie accessTokenCookie = CookiesUtil.deleteCookie(CookieType.ACCESS_TOKEN, "");
-		ResponseCookie refreshTokenCookie = CookiesUtil.deleteCookie(CookieType.REFRESH_TOKEN, "");
+		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
 		
+		assert accessTokenCookie != null;
 		String accessToken = accessTokenCookie.getValue();
+		
+		ResponseCookie deletedAccessTokenCookie = CookiesUtil.deleteCookie(CookieType.ACCESS_TOKEN, "");
+		ResponseCookie deletedRefreshTokenCookie = CookiesUtil.deleteCookie(CookieType.REFRESH_TOKEN, "");
 		
 		String userId = jwtService.extractClaim(accessToken, Claims::getSubject);
 		
 		accountService.deleteAccount(userId);
 		
 		return ResponseEntity.status(HttpStatus.NO_CONTENT)
-				.header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
-				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+				.header(HttpHeaders.SET_COOKIE, deletedAccessTokenCookie.toString())
+				.header(HttpHeaders.SET_COOKIE, deletedRefreshTokenCookie.toString())
 				.build();
 	}
 }

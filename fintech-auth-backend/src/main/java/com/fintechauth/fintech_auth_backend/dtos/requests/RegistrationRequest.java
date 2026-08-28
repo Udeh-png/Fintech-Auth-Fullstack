@@ -5,10 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 
 @Data
-public class RegistrationRequest {
+public class RegistrationRequest implements Serializable {
 	
 	@NotBlank
 	@Size(min=3, max = 20)

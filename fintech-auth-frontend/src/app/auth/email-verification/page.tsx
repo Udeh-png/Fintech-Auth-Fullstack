@@ -89,7 +89,9 @@ export default function EmailVerificationPage() {
 
   const verifyOtp = async (value: string) => {
     const apiEndpoint =
-      param.get("context") == "register" ? "registration/verify" : "verify-otp";
+      param.get("context") == "register"
+        ? "registration/verify"
+        : "verify-password-reset-otp";
     return await fetch(`${backendHostname}/api/auth/${apiEndpoint}`, {
       method: "POST",
       credentials: "include",
