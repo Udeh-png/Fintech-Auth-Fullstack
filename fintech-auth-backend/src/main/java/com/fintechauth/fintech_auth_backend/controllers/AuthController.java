@@ -143,7 +143,7 @@ public class AuthController {
 	
 	@PostMapping("/reset-password")
 	public ResponseEntity<?> resetPassword (@RequestBody Map<String, String> passwordMap, HttpServletRequest request, HttpServletResponse response) throws AccountLockedException, MessagingException, UnsupportedEncodingException {
-		Cookie resetPasswordIdCookie = WebUtils.getCookie(request, "RESET_PASSWORD_SESSION_ID");
+		Cookie resetPasswordIdCookie = WebUtils.getCookie(request, CookieType.RESET_PASSWORD_SESSION_ID.getName());
 		
 		if (resetPasswordIdCookie == null) throw new RuntimeException();
 		
@@ -159,6 +159,15 @@ public class AuthController {
 				.header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
 				.build();
+	}
+	
+	@GetMapping("/cookie-check")
+	public ResponseEntity<?> cookieCheck (HttpServletRequest request) {
+		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
+		
+		System.out.println(accessTokenCookie.getValue());
+		
+		return ResponseEntity.ok(accessTokenCookie.getValue());
 	}
 }
 
