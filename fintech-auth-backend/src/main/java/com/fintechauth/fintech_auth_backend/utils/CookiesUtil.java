@@ -27,7 +27,7 @@ public class CookiesUtil {
 	public static ResponseCookie createCookie (CookieType type, String value) {
 		return ResponseCookie.from(type.getName(), value)
 				.httpOnly(true)
-				.secure(false)
+				.secure(true)
 				.path("/")
 				.maxAge(type.getMaxAgeSeconds())
 				.sameSite("None")
@@ -37,7 +37,7 @@ public class CookiesUtil {
 	public static ResponseCookie deleteCookie (CookieType type, String value) {
 		return ResponseCookie.from(type.getName(), value)
 				.httpOnly(true)
-				.secure(false)
+				.secure(true)
 				.path("/")
 				.maxAge(0)
 				.sameSite("None")
