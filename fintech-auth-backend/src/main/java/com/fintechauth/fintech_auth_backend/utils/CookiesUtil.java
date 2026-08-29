@@ -9,7 +9,7 @@ public class CookiesUtil {
 				.httpOnly(true)
 				.secure(true)
 				.path("/")
-				.sameSite("Strict")
+				.sameSite("None")
 				.maxAge(type.getMaxAgeSeconds())
 				.build();
 	}
@@ -19,7 +19,7 @@ public class CookiesUtil {
 				.httpOnly(true)
 				.secure(true)
 				.path("/")
-				.sameSite("Strict")
+				.sameSite("None")
 				.maxAge(0)
 				.build();
 	}
@@ -30,7 +30,7 @@ public class CookiesUtil {
 				.secure(false)
 				.path("/")
 				.maxAge(type.getMaxAgeSeconds())
-				.sameSite("Strict")
+				.sameSite("None")
 				.build();
 	}
 	
@@ -40,7 +40,7 @@ public class CookiesUtil {
 				.secure(false)
 				.path("/")
 				.maxAge(0)
-				.sameSite("Strict")
+				.sameSite("None")
 				.build();
 	}
 }
