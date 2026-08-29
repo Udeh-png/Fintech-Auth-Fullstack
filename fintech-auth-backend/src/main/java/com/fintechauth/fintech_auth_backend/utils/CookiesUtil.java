@@ -30,7 +30,7 @@ public class CookiesUtil {
 				.secure(false)
 				.path("/")
 				.maxAge(type.getMaxAgeSeconds())
-				.sameSite("Lax")
+				.sameSite("Strict")
 				.build();
 	}
 	
@@ -40,7 +40,7 @@ public class CookiesUtil {
 				.secure(false)
 				.path("/")
 				.maxAge(0)
-				.sameSite("Lax")
+				.sameSite("Strict")
 				.build();
 	}
 }
