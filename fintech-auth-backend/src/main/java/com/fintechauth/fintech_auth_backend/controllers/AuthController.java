@@ -94,9 +94,11 @@ public class AuthController {
 	public ResponseEntity<?> forgotPassword (@RequestBody Map<String, String> userEmail, HttpServletRequest request) throws AccountLockedException {
 		Cookie forgotPasswordIdCookie = WebUtils.getCookie(request, CookieType.FORGOT_PASSWORD_SESSION_ID.getName());
 		
-		String forgotPasswordId = authService.forgotPassword(userEmail.get("email"), forgotPasswordIdCookie.getValue());
+		String cookie = (forgotPasswordIdCookie != null ? forgotPasswordIdCookie.getValue() : null);
 		
-		if (forgotPasswordIdCookie.getValue() == null) {
+		String forgotPasswordId = authService.forgotPassword(userEmail.get("email"), cookie);
+		
+		if (forgotPasswordIdCookie == null) {
 			ResponseCookie currentForgotPasswordIdCookie = CookiesUtil.createCookie(CookieType.FORGOT_PASSWORD_SESSION_ID, forgotPasswordId);
 			
 			return ResponseEntity.ok()
