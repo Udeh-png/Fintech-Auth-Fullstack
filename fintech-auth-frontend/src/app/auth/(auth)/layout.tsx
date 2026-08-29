@@ -1,4 +1,5 @@
 import { AuthLeftSide } from "@/components/auth/AuthLeftSide";
+import { Suspense } from "react";
 
 export default function Layout({
   children,
@@ -15,7 +16,9 @@ export default function Layout({
         {children}
 
         <div className="pr-1">
-          <AuthLeftSide />
+          <Suspense fallback={null}>
+            <AuthLeftSide />
+          </Suspense>
         </div>
 
         <div className="flex items-center justify-center">{AuthPages}</div>

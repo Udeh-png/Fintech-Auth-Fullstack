@@ -50,6 +50,7 @@ export default function EmailVerificationPage() {
     setError,
     setValue,
     setFocus,
+    reset,
     formState: { errors, isSubmitted, isValid },
   } = useForm<OtpInputType>({
     resolver: zodResolver(otpInputSchema),
@@ -129,21 +130,22 @@ export default function EmailVerificationPage() {
       const response = await verifyOtp(values);
       setIsLoading(false);
 
-      console.log(response);
-      if (response.status === 200) {
-        localStorage.removeItem("userEmail");
+      if (!String(response.status).startsWith("2")) {
+        const error = await response.json();
 
-        console.log("otp is valid");
-        if (param.get("context") == "register") redirect("/home");
-
-        redirect("/auth/reset-password");
+        setError("root", {
+          message: error.message,
+        });
       }
 
-      const error = await response.json();
+      localStorage.removeItem("userEmail");
 
-      setError("root", {
-        message: error.message,
-      });
+      console.log("otp is valid");
+      if (param.get("context") == "register") {
+        redirect("/home");
+      }
+
+      redirect("/auth/reset-password");
     }
   };
 
@@ -156,7 +158,7 @@ export default function EmailVerificationPage() {
 
     setIsLoading(false);
 
-    if (response.status !== 200) {
+    if (!String(response.status).startsWith("2")) {
       const error = await response.json();
 
       setError("root", {
@@ -164,7 +166,9 @@ export default function EmailVerificationPage() {
       });
       return;
     }
+
     setExpired(false);
+    reset();
   };
 
   useEffect(() => {

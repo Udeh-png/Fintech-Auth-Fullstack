@@ -227,8 +227,6 @@ iframe {
 }
 
 .material-spinner .path {
-  stroke: white;
-  stroke-width: 2px;
   stroke-linecap: round;
   animation: dash 1.5s ease-in-out infinite;
 }
