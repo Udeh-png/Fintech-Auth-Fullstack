@@ -2,6 +2,7 @@ package com.fintechauth.fintech_auth_backend.mappers;
 
 import com.fintechauth.fintech_auth_backend.dtos.requests.RegistrationRequest;
 import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
+import com.fintechauth.fintech_auth_backend.dtos.response.WalletResponse;
 import com.fintechauth.fintech_auth_backend.models.User;
 import com.fintechauth.fintech_auth_backend.models.Wallet;
 import lombok.NonNull;
@@ -13,6 +14,7 @@ public class Mapper {
 	public static UserResponse userToUserResponse (@NonNull User user) {
 		return new UserResponse(
 				user.getId(),
+				user.getUserName(),
 				user.getFirstName(),
 				user.getLastName(),
 				user.getEmail(),
@@ -44,6 +46,15 @@ public class Mapper {
 				"Nigeria",
 				"ACTIVE",
 				Instant.now()
+		);
+	}
+	
+	public static WalletResponse walletToWalletResponse(Wallet wallet) {
+		return new WalletResponse(
+				wallet.getId(),
+				wallet.getAccountNumber(),
+				wallet.getVirtualAccountBank(),
+				wallet.getAccountName()
 		);
 	}
 }
