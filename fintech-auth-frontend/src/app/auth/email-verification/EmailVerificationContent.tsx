@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { LoadingScreen } from "@/components/shared/LoadingScreen";
 import { redirect, useSearchParams } from "next/navigation";
 import { ErrorMessage } from "@/components/auth/ErrorMessage";
+import { Config } from "@/config";
 
 const fields = [
   "otpInput1",
@@ -22,7 +23,7 @@ const fields = [
 //  rather than just string. This is important so it matches the type of the form data.
 
 export const EmailVerificationContent = () => {
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const inputContainerRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);

@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MaterialSpinner } from "@/components/shared/MaterialSpinner";
 import z from "zod";
 import { useRouter } from "next/navigation";
+import { Config } from "@/config";
 
 const resetPasswordSchema = z
   .object({
@@ -34,7 +35,7 @@ type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPassword() {
   const router = useRouter();
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const {
     handleSubmit,

@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
 import { CopyButton } from "./CopyButton";
 import { redirect } from "next/navigation";
+import { Config } from "@/config";
 
 export const WalletInfoDisplay = async () => {
   const cookieStore = await cookies();
 
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const res = await fetch(`${backendHostname}/api/account/wallet-info`, {
     headers: {

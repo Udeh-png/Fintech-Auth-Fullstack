@@ -7,12 +7,13 @@ import { BottomSheet } from "./BottomSheet";
 import { useRouter } from "next/navigation";
 import { LoadingScreen } from "./LoadingScreen";
 import { useState } from "react";
+import { Config } from "@/config";
 
 const LogoutComp = ({ onClose }: { onClose: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const handleLogout = async () => {
     setIsLoading(true);

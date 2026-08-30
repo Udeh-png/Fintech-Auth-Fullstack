@@ -2,6 +2,7 @@
 
 import { FormWrapper } from "@/components/auth/FormWrapper";
 import { MaterialSpinner } from "@/components/shared/MaterialSpinner";
+import { Config } from "@/config";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ const zodSchema = z.object({
 type FormType = z.infer<typeof zodSchema>;
 
 export default function ResetPassword() {
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
   const router = useRouter();
   const {
     register,

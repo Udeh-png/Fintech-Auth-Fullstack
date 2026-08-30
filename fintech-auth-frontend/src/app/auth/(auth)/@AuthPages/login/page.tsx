@@ -10,9 +10,10 @@ import { MaterialSpinner } from "@/components/shared/MaterialSpinner";
 import { AnimatePresence, motion } from "framer-motion";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useRouter } from "next/navigation";
+import { Config } from "@/config";
 
 export default function Login() {
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
   const {
     register,
     handleSubmit,

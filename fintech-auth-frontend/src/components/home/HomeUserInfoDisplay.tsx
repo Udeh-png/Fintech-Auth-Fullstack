@@ -1,10 +1,11 @@
+import { Config } from "@/config";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const UserInfoDisplay = async () => {
   const cookieStore = await cookies();
 
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const res = await fetch(`${backendHostname}/api/account/user-info`, {
     headers: {

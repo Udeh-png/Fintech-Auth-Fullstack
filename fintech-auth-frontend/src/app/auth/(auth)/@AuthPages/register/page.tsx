@@ -11,12 +11,13 @@ import { ErrorMessage } from "@/components/auth/ErrorMessage";
 import { PasswordFieldWithChecks } from "@/components/auth/PasswordFieldWIthChecks";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useRouter } from "next/navigation";
+import { Config } from "@/config";
 
 export default function Signup() {
   const errMsgRef = useRef<HTMLDivElement | null>(null);
   const [, setTime] = useState<string | null>(null);
   const router = useRouter();
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const {
     register,

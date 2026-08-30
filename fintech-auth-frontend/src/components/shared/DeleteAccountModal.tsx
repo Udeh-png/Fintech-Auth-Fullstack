@@ -5,12 +5,13 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingScreen } from "./LoadingScreen";
+import { Config } from "@/config";
 
 const DeleteAccountComp = ({ onClose }: { onClose: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+  const backendHostname = Config.API_URL;
 
   const handleDeleteAccount = async () => {
     setIsLoading(true);
