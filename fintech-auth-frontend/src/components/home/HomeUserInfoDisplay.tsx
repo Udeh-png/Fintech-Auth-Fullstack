@@ -17,7 +17,7 @@ export const UserInfoDisplay = async () => {
 
   return (
     <div>
-      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight line-clamp-1">
+      <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight md:line-clamp-1 line-clamp-2">
         {userName}
       </h1>
 
