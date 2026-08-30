@@ -281,6 +281,9 @@ export const EmailVerificationContent = () => {
                 We&apos;ve sent a 6-digit verification code to
               </p>
               <span className="font-medium block h-6.5">{userEmail}</span>
+              <p className="text-white/50 text-sm mt-2 md:font-light font-normal">
+                If you don&apos;t see it, please check your spam folder
+              </p>
             </div>
           </div>
 
