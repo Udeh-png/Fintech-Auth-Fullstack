@@ -8,7 +8,7 @@ export const UserInfoDisplay = async () => {
 
   const res = await fetch(`${backendHostname}/api/account/user-info`, {
     headers: {
-      Cookies: cookieStore.toString(),
+      Cookie: cookieStore.toString(),
     },
     cache: "no-store",
   });
