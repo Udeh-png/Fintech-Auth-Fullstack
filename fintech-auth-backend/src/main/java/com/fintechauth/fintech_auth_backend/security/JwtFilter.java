@@ -40,6 +40,8 @@ public class JwtFilter extends OncePerRequestFilter {
 			String jwtToken = null;
 			String userEmail = null;
 			
+			System.out.println(tokenCookie);
+			
 			if (tokenCookie != null) {
 				jwtToken = tokenCookie.getValue();
 				userId = jwtService.extractClaim(jwtToken, Claims::getSubject);
