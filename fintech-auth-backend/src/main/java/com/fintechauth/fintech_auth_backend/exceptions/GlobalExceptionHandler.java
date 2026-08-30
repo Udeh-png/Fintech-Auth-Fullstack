@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.security.auth.login.AccountLockedException;
 import java.net.UnknownHostException;
 
 @Slf4j
@@ -76,6 +77,13 @@ public class GlobalExceptionHandler {
 		ErrorResponse er = new ErrorResponse(ossa.getMessage(), "SESSION_STILL_ACTIVE");
 		
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(er);
+	}
+	
+	@ExceptionHandler(AccountLockedException.class)
+	public ResponseEntity<@NonNull ErrorResponse> otpStillActive (AccountLockedException ossa) {
+		ErrorResponse er = new ErrorResponse(ossa.getMessage(), "ACCOUNT_LOCKED");
+		
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(er);
 	}
 	
 	@ExceptionHandler(CooldownActiveException.class)

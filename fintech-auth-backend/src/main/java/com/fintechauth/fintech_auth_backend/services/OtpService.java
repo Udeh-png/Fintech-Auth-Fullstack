@@ -102,12 +102,10 @@ public class OtpService {
 				redisTemplate.hasKey("otp:requests:locked:" + email);
 				redisTemplate.hasKey("otp:attempts:locked:" + email);
 				
-				redisTemplate.opsForValue().set("otp:requests:" + email, "0", Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL)));
-				
 				redisTemplate.opsForValue().setIfAbsent(
 						requestCooldownKey,
 						"1",
-						Expiration.from(Duration.ofMinutes(1))
+						Expiration.from(Duration.ofSeconds(70))
 				);
 				return null;
 			}
@@ -126,6 +124,10 @@ public class OtpService {
 		Long requests = redisTemplate.opsForValue().increment(requestsKey);
 		
 		long currentReqCount = requests == null ? 0 : requests;
+		
+		if (currentReqCount == 1) {
+			redisTemplate.expire(requestsKey, Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL))); // if the key was created add the TTL
+		}
 		
 		if (currentReqCount > REQUESTS_LIMIT) { // Used > so if a prev request incs the key this catches it
 			throw new TooManyOtpRequestsException();
@@ -151,7 +153,6 @@ public class OtpService {
 			@Override
 			public <K, V> Object execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
 				redisTemplate.hasKey(("otp:attempts:locked:" + email));
-				redisTemplate.opsForValue().set(attemptsKey, "0", Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL)));
 				return null;
 			}
 		});
@@ -160,6 +161,12 @@ public class OtpService {
 			throw new AccountLockedException("Too many verification code attempts");
 		
 		Long attempts = redisTemplate.opsForValue().increment(attemptsKey);
+		
+		long currentAttempts = attempts == null ? 0 : attempts;
+		
+		if (currentAttempts == 1) {
+			redisTemplate.expire("otp:attempts:" + email, Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL)));
+		}
 		
 		long currentAttemptsCount = attempts == null ? 0 : attempts;
 		

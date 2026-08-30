@@ -3,7 +3,7 @@ export const MaterialSpinner = ({
   color,
 }: {
   sizeInPx: number;
-  color?: string;
+  color?: "primary" | null;
 }) => {
   const dynamicStyle = {
     width: `${sizeInPx}px`,
@@ -18,7 +18,8 @@ export const MaterialSpinner = ({
         cy="50%"
         r="50%"
         fill="none"
-        stroke={color || "white"}
+        stroke={color == "primary" ? "var(--primary-color)" : "white"}
+        strokeWidth={Math.round(sizeInPx * (10 / 100))}
       ></circle>
     </svg>
   );

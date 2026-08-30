@@ -91,13 +91,22 @@ public class AuthController {
 	}
 	
 	@PostMapping("/forgot-password")
-	public ResponseEntity<?> forgotPassword (@RequestBody Map<String, String> userEmail) throws AccountLockedException {
-		String forgotPasswordId = authService.forgotPassword(userEmail.get("email"));
+	public ResponseEntity<?> forgotPassword (@RequestBody Map<String, String> userEmail, HttpServletRequest request) throws AccountLockedException {
+		Cookie forgotPasswordIdCookie = WebUtils.getCookie(request, CookieType.FORGOT_PASSWORD_SESSION_ID.getName());
 		
-		ResponseCookie forgotPasswordIdCookie = CookiesUtil.createCookie(CookieType.FORGOT_PASSWORD_SESSION_ID, forgotPasswordId);
+		String cookie = (forgotPasswordIdCookie != null ? forgotPasswordIdCookie.getValue() : null);
+		
+		String forgotPasswordId = authService.forgotPassword(userEmail.get("email"), cookie);
+		
+		if (forgotPasswordIdCookie == null) {
+			ResponseCookie currentForgotPasswordIdCookie = CookiesUtil.createCookie(CookieType.FORGOT_PASSWORD_SESSION_ID, forgotPasswordId);
+			
+			return ResponseEntity.ok()
+					.header(HttpHeaders.SET_COOKIE, currentForgotPasswordIdCookie.toString())
+					.build();
+		}
 		
 		return ResponseEntity.ok()
-				.header(HttpHeaders.SET_COOKIE, forgotPasswordIdCookie.toString())
 				.build();
 	}
 	
@@ -134,7 +143,7 @@ public class AuthController {
 	
 	@PostMapping("/reset-password")
 	public ResponseEntity<?> resetPassword (@RequestBody Map<String, String> passwordMap, HttpServletRequest request, HttpServletResponse response) throws AccountLockedException, MessagingException, UnsupportedEncodingException {
-		Cookie resetPasswordIdCookie = WebUtils.getCookie(request, "RESET_PASSWORD_SESSION_ID");
+		Cookie resetPasswordIdCookie = WebUtils.getCookie(request, CookieType.RESET_PASSWORD_SESSION_ID.getName());
 		
 		if (resetPasswordIdCookie == null) throw new RuntimeException();
 		
@@ -150,6 +159,15 @@ public class AuthController {
 				.header(HttpHeaders.SET_COOKIE, accessTokenCookie.toString())
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
 				.build();
+	}
+	
+	@GetMapping("/cookie-check")
+	public ResponseEntity<?> cookieCheck (HttpServletRequest request) {
+		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
+		
+		System.out.println(accessTokenCookie.getValue());
+		
+		return ResponseEntity.ok(accessTokenCookie.getValue());
 	}
 }
 

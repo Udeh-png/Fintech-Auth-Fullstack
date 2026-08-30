@@ -1,6 +1,7 @@
 package com.fintechauth.fintech_auth_backend.controllers;
 
 import com.fintechauth.fintech_auth_backend.dtos.response.UserResponse;
+import com.fintechauth.fintech_auth_backend.dtos.response.WalletResponse;
 import com.fintechauth.fintech_auth_backend.services.AccountService;
 import com.fintechauth.fintech_auth_backend.services.JwtService;
 import com.fintechauth.fintech_auth_backend.utils.CookieType;
@@ -55,8 +56,8 @@ public class AccountController {
 				.build();
 	}
 	
-	@GetMapping("/me")
-	public ResponseEntity<?> user (HttpServletRequest request) {
+	@GetMapping("/user-info")
+	public ResponseEntity<?> userInfo (HttpServletRequest request) {
 		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
 		
 		assert accessTokenCookie != null;
@@ -67,5 +68,19 @@ public class AccountController {
 		UserResponse userResponse = accountService.getUserDeets(userId);
 		
 		return ResponseEntity.ok(userResponse);
+	}
+	
+	@GetMapping("/wallet-info")
+	public ResponseEntity<?> walletInfo (HttpServletRequest request) {
+		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
+		
+		assert accessTokenCookie != null;
+		String accessToken = accessTokenCookie.getValue();
+		
+		String userId = jwtService.extractClaim(accessToken, Claims::getSubject);
+		
+		WalletResponse walletInfo = accountService.getWalletDeets(userId);
+		
+		return ResponseEntity.ok(walletInfo);
 	}
 }

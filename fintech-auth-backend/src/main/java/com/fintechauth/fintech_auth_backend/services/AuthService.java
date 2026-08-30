@@ -125,20 +125,20 @@ public class AuthService {
 		issueOtp(email);
 	}
 	
-	public String forgotPassword (String email) throws AccountLockedException {
+	public String forgotPassword (String email, String id) throws AccountLockedException {
 		if (!userRepo.existsByEmail(email)) throw new RuntimeException();
 		
-		String id = generateId();
+		String currentId = id == null ? generateId() : id;
 		
 		redisTemplate.opsForValue().set(
-				"forgot:password:email:address:"+ id,
+				"forgot:password:email:address:"+ currentId,
 				email,
 				Expiration.from(Duration.ofMinutes(SESSION_TTL))
 		);
 		
 		issueOtp(email);
 		
-		return id;
+		return currentId;
 	}
 	
 	public void resendPasswordOtp (String id) throws AccountLockedException {
