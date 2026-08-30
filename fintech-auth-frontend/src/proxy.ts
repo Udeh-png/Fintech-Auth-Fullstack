@@ -7,13 +7,14 @@ export default function proxy(request: NextRequest) {
   const forgotPasswordId = request.cookies.get("FORGOT_PASSWORD_SESSION_ID");
   const resetPasswordId = request.cookies.get("RESET_PASSWORD_SESSION_ID");
 
-  // if (request.nextUrl.pathname == "/home") {
-  //   if (accessToken || refreshToken) return NextResponse.next();
-
-  //   const redirectUrl = request.nextUrl.clone();
-  //   redirectUrl.pathname = "/auth/login";
-  //   return NextResponse.redirect(redirectUrl);
-  // }
+  if (request.nextUrl.pathname == "/home") {
+    if (!accessToken || !refreshToken) {
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = "/auth/login";
+      return NextResponse.redirect(redirectUrl);
+    }
+    return NextResponse.next();
+  }
 
   if (request.nextUrl.pathname == "/auth/login") {
     if (!accessToken || !refreshToken) return NextResponse.next();

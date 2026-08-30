@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { LuCopy, LuCopyCheck } from "react-icons/lu";
 
-export const CopyButton = () => {
+export const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const CopyButton = () => {
         <LuCopy
           className="text-primary cursor-pointer"
           onClick={async () => {
-            await navigator.clipboard.writeText("0838459856");
+            await navigator.clipboard.writeText(text);
 
             setCopied(true);
           }}

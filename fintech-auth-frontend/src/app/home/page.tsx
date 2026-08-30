@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FaRegTrashCan } from "react-icons/fa6";
-import { LuCopy, LuLogOut, LuShieldCheck } from "react-icons/lu";
+import { LuLogOut, LuShieldCheck } from "react-icons/lu";
 import { LogoutButton } from "@/components/home/LogoutButton";
 import { DeleteAccountButton } from "@/components/home/DeleteAccountButton";
 import { UserInfoDisplay } from "@/components/home/HomeUserInfoDisplay";
