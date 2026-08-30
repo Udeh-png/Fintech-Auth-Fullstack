@@ -10,6 +10,7 @@ public class CookiesUtil {
 				.secure(true)
 				.path("/")
 				.sameSite("Lax")
+				.domain(".fintechauth.site")
 				.maxAge(type.getMaxAgeSeconds())
 				.build();
 	}
@@ -20,6 +21,7 @@ public class CookiesUtil {
 				.secure(true)
 				.path("/")
 				.sameSite("Lax")
+				.domain(".fintechauth.site")
 				.maxAge(0)
 				.build();
 	}
@@ -31,6 +33,7 @@ public class CookiesUtil {
 				.path("/")
 				.maxAge(type.getMaxAgeSeconds())
 				.sameSite("Lax")
+				.domain(".fintechauth.site")
 				.build();
 	}
 	
@@ -41,6 +44,7 @@ public class CookiesUtil {
 				.path("/")
 				.maxAge(0)
 				.sameSite("Lax")
+				.domain(".fintechauth.site")
 				.build();
 	}
 }
