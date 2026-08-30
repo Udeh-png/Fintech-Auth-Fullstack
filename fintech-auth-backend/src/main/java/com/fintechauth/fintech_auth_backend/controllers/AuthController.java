@@ -160,15 +160,6 @@ public class AuthController {
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
 				.build();
 	}
-	
-	@GetMapping("/cookie-check")
-	public ResponseEntity<?> cookieCheck (HttpServletRequest request) {
-		Cookie accessTokenCookie = WebUtils.getCookie(request, CookieType.ACCESS_TOKEN.getName());
-		
-		System.out.println(accessTokenCookie.getValue());
-		
-		return ResponseEntity.ok(accessTokenCookie.getValue());
-	}
 }
 
 /*
