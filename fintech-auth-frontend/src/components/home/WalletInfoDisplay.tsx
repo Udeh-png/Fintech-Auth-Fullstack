@@ -9,12 +9,10 @@ export const WalletInfoDisplay = async () => {
 
   const res = await fetch(`${backendHostname}/api/account/wallet-info`, {
     headers: {
-      Cookies: cookieStore.toString(),
+      Cookie: cookieStore.toString(),
     },
     cache: "no-store",
   });
-
-  console.log(cookieStore.toString());
 
   const { accountNumber, bankName } = await res.json();
   const formattedAccNo = accountNumber.replace(
