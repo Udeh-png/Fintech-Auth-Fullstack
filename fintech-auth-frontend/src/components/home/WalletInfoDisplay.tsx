@@ -1,11 +1,24 @@
+import { cookies } from "next/headers";
 import { CopyButton } from "./CopyButton";
+import { redirect } from "next/navigation";
 
 export const WalletInfoDisplay = async () => {
-  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
-  const { accountNumber, bankName } = await fetch(
-    `${backendHostname}/api/account/wallet-info`,
-  ).then(async (res) => await res.json());
+  const cookieStore = await cookies();
 
+  const backendHostname = process.env.NEXT_PUBLIC_BACKEND_HOSTNAME;
+
+  const res = await fetch(`${backendHostname}/api/account/wallet-info`, {
+    headers: {
+      Cookies: cookieStore.toString(),
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    redirect("/auth/login");
+  }
+
+  const { accountNumber, bankName } = await res.json();
   const formattedAccNo = accountNumber.replace(
     /(\d{3})(\d{3})(\d{4})/,
     "$1 $2 $3",
