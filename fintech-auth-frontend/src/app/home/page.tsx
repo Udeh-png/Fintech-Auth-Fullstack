@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-export const dynamic = "force dynamic";
+export const dynamic = "force-dynamic";
 
 import { FaRegTrashCan } from "react-icons/fa6";
 import { LuLogOut, LuShieldCheck } from "react-icons/lu";
