@@ -21,10 +21,13 @@ public class AccountService {
 	
 	public void deleteAccount (String userId) {
 		Optional<User> userOpt = userRepo.findById(userId);
+		Optional<Wallet> walletOpt = walletRepo.findByUserId(userId);
 		
 		User user = userOpt.orElseThrow();
+		Wallet wallet = walletOpt.orElseThrow();
 		
 		userRepo.delete(user);
+		walletRepo.delete(wallet);
 	}
 	
 	public UserResponse getUserDeets(String userId) {

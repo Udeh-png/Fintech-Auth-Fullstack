@@ -111,7 +111,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<@NonNull ErrorResponse> usernameNotFound (UsernameNotFoundException unf) {
 		ErrorResponse er = new ErrorResponse(unf.getMessage(), "WRONG_CREDENTIALS");
 		log.error("Bad request: ", unf);
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(er);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(er);
 	}
 	
 	@ExceptionHandler (ExpiredJwtException.class)

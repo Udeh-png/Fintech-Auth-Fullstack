@@ -20,10 +20,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
 import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.CredentialNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,8 +70,10 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login (@RequestBody LoginRequest request) {
+	public ResponseEntity<?> login (@RequestBody LoginRequest request) throws CredentialNotFoundException {
 		UserResponse userResponse = authService.login(request);
+		
+		if (userResponse == null) throw new UsernameNotFoundException("Wrong Credentials");
 		
 		ResponseCookie accessTokenCookie = CookiesUtil.createJwtCookies(CookieType.ACCESS_TOKEN, jwtService.generateAccessToken(userResponse));
 		ResponseCookie refreshTokenCookie = CookiesUtil.createJwtCookies( CookieType.REFRESH_TOKEN, jwtService.generateRefreshToken(userResponse));
