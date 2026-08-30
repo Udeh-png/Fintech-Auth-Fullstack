@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { CopyButton } from "./CopyButton";
-import { redirect } from "next/navigation";
 import { Config } from "@/config";
 
 export const WalletInfoDisplay = async () => {
@@ -14,10 +13,6 @@ export const WalletInfoDisplay = async () => {
     },
     cache: "no-store",
   });
-
-  if (!res.ok) {
-    redirect("/auth/login");
-  }
 
   const { accountNumber, bankName } = await res.json();
   const formattedAccNo = accountNumber.replace(

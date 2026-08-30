@@ -1,6 +1,5 @@
 import { Config } from "@/config";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export const UserInfoDisplay = async () => {
   const cookieStore = await cookies();
@@ -13,10 +12,6 @@ export const UserInfoDisplay = async () => {
     },
     cache: "no-store",
   });
-
-  if (!res.ok) {
-    redirect("/auth/login");
-  }
 
   const { userName, emailAddress } = await res.json();
 
