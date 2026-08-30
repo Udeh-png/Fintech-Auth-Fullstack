@@ -13,7 +13,7 @@ export const UserInfoDisplay = async () => {
     cache: "no-store",
   });
 
-  const { userName, emailAddress } = await res.json();
+  const { userName, email } = await res.json();
 
   return (
     <div>
@@ -21,7 +21,7 @@ export const UserInfoDisplay = async () => {
         {userName}
       </h1>
 
-      <p className="text-lg text-white/80">{emailAddress}</p>
+      <p className="text-lg text-white/80">{email}</p>
     </div>
   );
 };
