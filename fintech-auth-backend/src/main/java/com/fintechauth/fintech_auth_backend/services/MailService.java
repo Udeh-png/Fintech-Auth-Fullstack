@@ -19,7 +19,7 @@ class MailService {
 	
 	public void sendEmail(String toEmail,  String content, String subject) {
 		CreateEmailOptions params = CreateEmailOptions.builder()
-				.from("Walletly <" + fromEmail + ">")
+				.from("Fintech-Auth-Demo <" + fromEmail + ">")
 				.to(toEmail)
 				.subject(subject)
 				.html(buildOtpHtml(content))
