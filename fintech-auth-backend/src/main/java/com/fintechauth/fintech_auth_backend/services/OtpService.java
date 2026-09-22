@@ -78,7 +78,7 @@ public class OtpService {
 		redisTemplate.unlink("otp:code:salt:"+email);
 	}
 	
-	public void resetCounter (String counterKey) {
+	public void resetRedisKey (String counterKey) {
 		redisTemplate.delete(counterKey);
 	}
 	
@@ -111,8 +111,6 @@ public class OtpService {
 			}
 		});
 		
-		System.out.println(results);
-		
 		if (Boolean.TRUE.equals(results.getFirst()) || Boolean.TRUE.equals(results.get(1))) {
 			throw new AccountLockedException("Too many verification code requests");
 		}
@@ -133,16 +131,16 @@ public class OtpService {
 			throw new TooManyOtpRequestsException();
 		}
 		
-			mailService.sendEmail(email, otp, "OTP Verification");
+		mailService.sendEmail(email, otp, "OTP Verification");
 		
 		if (currentReqCount == REQUESTS_LIMIT) {
 			redisTemplate.opsForValue().set(
-					"otp:requests:locked:" + email,
-					"1",
-					Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
+				"otp:requests:locked:" + email,
+				"1",
+				Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
 			);
 			
-			resetCounter(requestsKey);
+			resetRedisKey(requestsKey);
 		}
 	}
 	
@@ -165,35 +163,34 @@ public class OtpService {
 		long currentAttempts = attempts == null ? 0 : attempts;
 		
 		if (currentAttempts == 1) {
-			redisTemplate.expire("otp:attempts:" + email, Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL)));
+			redisTemplate.expire(attemptsKey, Expiration.from(Duration.ofMinutes(OTP_REQUESTS_TTL)));
 		}
 		
-		long currentAttemptsCount = attempts == null ? 0 : attempts;
-		
-		if (currentAttemptsCount > ATTEMPTS_LIMIT) {
+		if (currentAttempts > ATTEMPTS_LIMIT) {
 			throw new TooManyAttemptsException();
 		}
 		
-		if (currentAttemptsCount == ATTEMPTS_LIMIT) {
+		if (currentAttempts == ATTEMPTS_LIMIT) {
 			redisTemplate.executePipelined(new SessionCallback<Object>() {
 				@Override
+				@SuppressWarnings("unchecked")
 				public <K, V> Object execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
-					redisTemplate.opsForValue().set(
-							"otp:attempts:locked:" + email,
-							"1",
+					operations.opsForValue().set(
+							(K) ("otp:attempts:locked:" + email),
+							(V) ("1"),
 							Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
 					);
 					
-					redisTemplate.opsForValue().set(
-							"otp:requests:locked:" + email,
-							"1",
+					operations.opsForValue().set(
+							(K) ("otp:requests:locked:" + email),
+							(V) ("1"),
 							Expiration.from(Duration.ofMinutes(ACCOUNT_LOCK_TTL))
 					);
 					return null;
 				}
 			});
 			invalidateOtp(email);
-			resetCounter(attemptsKey);
+			resetRedisKey(attemptsKey);
 			throw new TooManyAttemptsException();
 		}
 		

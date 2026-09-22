@@ -95,7 +95,7 @@ public class AuthService {
 		walletRepo.save(newWallet);
 		
 		otpService.resetRedisOtpKeys(userEmail);
-		resetRedisRegKeys();
+		resetRedisRegKeys(sessionId, userEmail);
 		
 		return Mapper.userToUserResponse(user);
 	}
@@ -133,7 +133,7 @@ public class AuthService {
 		redisTemplate.opsForValue().set(
 				"forgot:password:email:address:"+ currentId,
 				email,
-				Expiration.from(Duration.ofMinutes(SESSION_TTL))
+				Duration.ofMinutes(SESSION_TTL)
 		);
 		
 		issueOtp(email);
@@ -157,10 +157,19 @@ public class AuthService {
 		
 		redisTemplate.executePipelined(new SessionCallback<>() {
 			@Override
+			@SuppressWarnings("unchecked")
 			public <K, V> Object execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
-				redisTemplate.opsForValue().set("reset:password:email:address:" + resetPasswordId, email);
+				String setKey = "reset:password:email:address:" + resetPasswordId;
+				String deleteKey = "forgot:password:email:address:" + id;
 				
-				redisTemplate.delete("forgot:password:email:address:"+id);
+				operations.opsForValue().set(
+						(K) setKey,
+						(V) email,
+						Duration.ofMinutes(SESSION_TTL)
+				);
+				
+				operations.delete((K) deleteKey);
+				
 				return null;
 			}
 		});
@@ -205,27 +214,51 @@ public class AuthService {
 		return UUID.randomUUID().toString();
 	}
 	
-	public void storeRegSession (String id, RegistrationRequest regInfo) {
-		Map<String, Object> regInfoMap = Map.of(id, regInfo, regInfo.getEmail(), id);
-		redisTemplate.opsForHash()
-				.putAndExpire(
-						"reg:info",
+	public void storeRegSession(String id, RegistrationRequest regInfo) {
+		redisTemplate.executePipelined(new SessionCallback<Object>() {
+			@Override
+			@SuppressWarnings("unchecked")
+			public <K, V> Object execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
+				
+				String hashKey = "reg:info:" + id;
+				
+				Map<Object, Object> regInfoMap = Map.of("data", regInfo);
+				
+				operations.opsForHash().putAndExpire(
+						(K) hashKey,
 						regInfoMap,
 						RedisHashCommands.HashFieldSetOption.UPSERT,
 						Expiration.from(Duration.ofMinutes(SESSION_TTL))
 				);
+				
+				String sessionKey = "reg:session:id:" + regInfo.getEmail();
+				operations.opsForValue().set(
+						(K) sessionKey,
+						(V) id,
+						Duration.ofMinutes(SESSION_TTL)
+				);
+				
+				return null;
+			}
+		});
 	}
 	
-	public void resetRedisRegKeys () {
-		redisTemplate.delete("reg:info");
+	public void resetRedisRegKeys (String id, String email) {
+		redisTemplate.executePipelined(new SessionCallback<Object>() {
+			@Override
+			public <K, V> Object execute(@NonNull RedisOperations<K, V> operations) throws DataAccessException {
+					redisTemplate.delete("reg:info:" + id);
+					redisTemplate.delete("reg:session:id:" + email);
+				return null;
+			}
+		});
 	}
 	
 	public RegistrationRequest getRegInfo (String sessionId) {
-		
-		return (RegistrationRequest) redisTemplate.opsForHash().get("reg:info", sessionId);
+		return (RegistrationRequest) redisTemplate.opsForHash().get("reg:info:" + sessionId, "data");
 	}
 	
 	public String getRegId (String email) {
-		return (String) redisTemplate.opsForHash().get("reg:info", email);
+		return redisTemplate.opsForValue().get("reg:session:id:"+email);
 	}
 }
